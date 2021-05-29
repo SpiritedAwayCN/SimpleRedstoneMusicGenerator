@@ -41,11 +41,13 @@ class MetadataBuilder(TagBuilder):
     def __init__(self) -> None:
         super().__init__('EnclosingSize', 'Metadata')
 
-    def build(self, ex, ey, ez, total_blocks, total_volume, region_count=1):
+    def build(self, ex, ey, ez, total_blocks=None, total_volume=None, region_count=1):
         self.add_property(TAG_Int(ex, 'x')).add_property(TAG_Int(ey, 'y')).add_property(TAG_Int(ez, 'z'))
-
-        self.add_common_property(TAG_Int(total_blocks, 'TotalBlocks'))
-        self.add_common_property(TAG_Int(total_volume, 'TotalVolume'))
+        
+        if not total_blocks is None:
+            self.add_common_property(TAG_Int(total_blocks, 'TotalBlocks'))
+        if not total_volume is None:
+            self.add_common_property(TAG_Int(total_volume, 'TotalVolume'))
         self.add_common_property(TAG_Int(region_count, 'RegionCount'))
 
         current_time = int(time.time() * 1000)

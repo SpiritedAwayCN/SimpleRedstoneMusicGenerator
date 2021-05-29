@@ -6,5 +6,6 @@ helpers/
 *.tree
 *.jpg
 *.litematic
+*.csv
 
 RMGeneratorDatapack/

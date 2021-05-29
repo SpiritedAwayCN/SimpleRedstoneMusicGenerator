@@ -1,3 +1,5 @@
+from region.RomRegion import RomRegion
+from utils.parser import keys_generator
 from region.PianoCommandRegion import PainoCommandRegion
 from container.NBTTagBuilders import MetadataBuilder
 from nbt import nbt
@@ -12,20 +14,36 @@ def _read_from_template():
 
 def build_schematic():
     nbtfile = nbt.NBTFile()
-
-    nbtfile.tags.append(MetadataBuilder().build(76, 1, 5, 377, 380).get_nbt_tag())
     
     regions = nbt.TAG_Compound()
     regions.name = 'Regions'
 
-    regions.tags.append(PainoCommandRegion(0, 0, 0).build_nbt_full())
+    regions.tags.append(PainoCommandRegion(42, 0, -89).build_nbt_full())
 
-    control_region, piano_region = _read_from_template()
+    regions.tags.extend(_read_from_template())
+
+    parser_gen = keys_generator()
+    xx = -18
+    romregions = [RomRegion(xx, 0, -90, name=f'ROM{xx}')]
+
+    for row, params in enumerate(parser_gen):
+        if row % 248 == 247:
+            params[-1] = 12
+            romregions[-1].build_row(row, params)
+            xx -= 3
+            romregions.append(RomRegion(xx, 0, -90, name=f'ROM{xx}'))
+        else:
+            romregions[-1].build_row(row, params)
+
+    regions.tags.extend(map(lambda x:x.build_nbt_full(), romregions))
+
 
     nbtfile.tags.append(regions)
     nbtfile.tags.append(nbt.TAG_Int(c.minecraft_dataversion, 'MinecraftDataVersion'))
     nbtfile.tags.append(nbt.TAG_Int(c.version, 'Version'))
 
+    nbtfile.tags.append(MetadataBuilder().build(0, 0, 0, region_count=3 + len(romregions)).get_nbt_tag())
+    
     return nbtfile
 
 if __name__=='__main__':

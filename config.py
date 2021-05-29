@@ -1,3 +1,5 @@
+input_file_name = './Bird-Poem.csv'
+
 author = 'Spirited_Away_'
 description = 'This schematic is auto-generated.'
 sche_name = 'redstone-music'
@@ -35,3 +37,15 @@ def playsound_command_list() -> list:
         function_list.append(f'piano.mp.{piano_key}')
     
     return function_list
+
+_key_dict = {'C':1, 'D':3, 'E':5, 'F':6, 'G':8, 'A':10, 'B':12}
+def str2keyid(string) -> int:
+    num = _key_dict[string[0]] + int(string[1]) * 12 - 18
+    for c in string[2:]:
+        if c == '#':
+            num += 1
+        elif c == 'b':
+            num -= 1
+
+    assert num >= 0 and num < 75
+    return num
