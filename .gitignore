@@ -1,0 +1,10 @@
+__pycache__
+.vscode
+
+helpers/
+
+*.tree
+*.jpg
+*.litematic
+
+RMGeneratorDatapack/
