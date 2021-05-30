@@ -34,13 +34,15 @@ def build_new(datapack_name):
 
     for key_id, value in enumerate(function_list):
         key = f'key{key_id + 9}'
-        function_command = '''execute run summon minecraft:falling_block 1 ~20 ~ {DropItem:false,Time:1,BlockState:{Name:"glowstone"}}
-summon minecraft:falling_block ~1 ~20 ~ {DropItem:false,Time:1,BlockState:{Name:"command_block"},TileEntityData:{auto:true,Command:"stopsound @a record %s"}}
-summon minecraft:falling_block ~2 ~20 ~ {DropItem:false,Time:1,BlockState:{Name:"command_block"},TileEntityData:{auto:true,Command:"execute at @a run playsound %s record @p ~ ~ ~ 999"}}
-summon minecraft:falling_block ~3 ~20 ~ {DropItem:false,Time:1,BlockState:{Name:"command_block"},TileEntityData:{auto:true,Command:"fill ~ ~ ~ ~-2 ~ ~ air"}}
-'''%(value, value)
-        with open(os.path.join(dir_func, key+'play.mcfunction'), "w") as f:
-            f.write(function_command)
+        for delay in range(3):
+            loc = 1 - delay if delay == 0 else -delay
+            function_command = '''execute run summon minecraft:falling_block 1 ~%d ~ {DropItem:false,Time:1,BlockState:{Name:"glowstone"}}
+    summon minecraft:falling_block ~%d ~%d ~ {DropItem:false,Time:1,BlockState:{Name:"command_block"},TileEntityData:{auto:true,Command:"stopsound @a record %s"}}
+    summon minecraft:falling_block ~%d ~%d ~ {DropItem:false,Time:1,BlockState:{Name:"command_block"},TileEntityData:{auto:true,Command:"execute at @a run playsound %s record @p ~ ~ ~ 999"}}
+    summon minecraft:falling_block ~%d ~%d ~ {DropItem:false,Time:1,BlockState:{Name:"command_block"},TileEntityData:{auto:true,Command:"fill ~ ~ ~ ~-2 ~ ~ air"}}
+    '''%(20+delay, loc,20+delay, value, 1+loc ,20+delay, value, 2+loc, 20+delay)
+            with open(os.path.join(dir_func, f'{key}play_d{delay}.mcfunction'), "w") as f:
+                f.write(function_command)
         function_command = '''execute run summon minecraft:falling_block ~1 ~20 ~ {DropItem:false,Time:1,BlockState:{Name:"command_block"},TileEntityData:{auto:true,Command:"stopsound @a record %s"}}
 summon minecraft:falling_block ~2 ~20 ~ {DropItem:false,Time:1,BlockState:{Name:"command_block"},TileEntityData:{auto:true,Command:"fill ~ ~ ~ ~-1 ~ ~ air"}}
 '''%(value)

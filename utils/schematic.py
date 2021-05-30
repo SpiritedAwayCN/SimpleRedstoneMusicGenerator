@@ -1,6 +1,6 @@
 from region.RomRegion import RomRegion
 from utils.parser import keys_generator
-from region.PianoCommandRegion import PainoCommandRegion
+from region.PianoCommandRegion import PianoCommandRegion
 from container.NBTTagBuilders import MetadataBuilder
 from nbt import nbt
 
@@ -18,24 +18,27 @@ def build_schematic():
     regions = nbt.TAG_Compound()
     regions.name = 'Regions'
 
-    regions.tags.append(PainoCommandRegion(42, 0, -89).build_nbt_full())
-
     regions.tags.extend(_read_from_template())
 
-    parser_gen = keys_generator()
+    piano_command_region = PianoCommandRegion(42, 0, -89)
+
+    parser_gen = keys_generator(piano_command_region)
     xx = -18
     romregions = [RomRegion(xx, 0, -90, name=f'ROM{xx}')]
 
     for row, params in enumerate(parser_gen):
-        if row % 248 == 247:
+        row_mod = row % 248
+        if  row_mod == 247:
             params[-1] = 12
-            romregions[-1].build_row(row, params)
+            romregions[-1].build_row(row_mod, params)
             xx -= 3
             romregions.append(RomRegion(xx, 0, -90, name=f'ROM{xx}'))
         else:
-            romregions[-1].build_row(row, params)
+            romregions[-1].build_row(row_mod, params)
 
     regions.tags.extend(map(lambda x:x.build_nbt_full(), romregions))
+    
+    regions.tags.append(piano_command_region.build_nbt_full())
 
 
     nbtfile.tags.append(regions)
